@@ -6,7 +6,7 @@
 /*   By: hecmarti <hecmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:06:39 by hecmarti          #+#    #+#             */
-/*   Updated: 2024/05/09 16:37:05 by hecmarti         ###   ########.fr       */
+/*   Updated: 2024/05/13 14:31:11 by hecmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	main(void)
 	sigact.sa_sigaction = ft_server_handler;
 	sigact.sa_flags = SA_SIGINFO;
 	sigemptyset(&sigact.sa_mask);
+	write(1, "SUCCESS!, Server is ready! The PID: ", 36);
 	ft_itoa(getpid());
 	write(1, "\n", 1);
 	while (1)

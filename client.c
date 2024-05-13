@@ -6,12 +6,11 @@
 /*   By: hecmarti <hecmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:06:34 by hecmarti          #+#    #+#             */
-/*   Updated: 2024/05/09 16:37:46 by hecmarti         ###   ########.fr       */
+/*   Updated: 2024/05/13 13:13:22 by hecmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
-# include <signal.h>
 
 int	ft_morse(int pid, int c)
 {
