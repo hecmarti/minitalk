@@ -6,46 +6,64 @@
 /*   By: hecmarti <hecmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:06:34 by hecmarti          #+#    #+#             */
-/*   Updated: 2024/05/13 13:13:22 by hecmarti         ###   ########.fr       */
+/*   Updated: 2024/05/20 16:21:57 by hecmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-int	ft_morse(int pid, int c)
-{
-	int	bit;
+// Sends the specified message to the specified
+// process using SIGUSR1 and SIGUSR2 signals
 
-	bit = 7;
-	while (bit != -1)
+// Initialize variables
+
+// Iterate through each character of the message
+
+// Iterate through each bit of the current character
+
+// If the current bit is 1, send SIGUSR1 signal;
+// otherwise, send SIGUSR2 signal
+
+// Sleep for 100 microseconds between each signal
+void	signal_action(int pid, char *str)
+{
+	int	i;
+	int	c;
+
+	i = 0;
+	while (*str)
 	{
-		if ((c >> bit) & 1)
-			kill(pid, SIGUSR1);
-		else
-			kill(pid, SIGUSR2);
-		usleep(100);
-		bit--;
+		c = *(str);
+		while (i < 8)
+		{
+			if (c << i & 0b10000000)
+				kill(pid, SIGUSR1);
+			else
+				kill(pid, SIGUSR2);
+			i++;
+			usleep(100);
+		}
+		str++;
+		i = 0;
 	}
-	return (0);
 }
 
-int	main(int argc, char *argv[])
-{
-	int				pid;
-	unsigned char	*str;
+// Validate the number of arguments
 
-	if (argc == 3)
+// Convert the server ID (PID) to an integer and
+// send the message using the signal_action function
+
+int	main(int argc, char **argv)
+{
+	if (argc != 3)
 	{
-		pid = ft_atoi(argv[1]);
-		str = (unsigned char *)argv[2];
-		while (*str)
-		{
-			ft_morse(pid,*str++);
-		}
+		ft_printf("Invalid number of arguments.\n");
+		ft_printf("Format: [./client <SERVER ID (PID)> <STRING>]\n");
+		exit(EXIT_FAILURE);
 	}
 	else
 	{
-		write(1, "invalid args", 13);
+		signal_action(ft_atoi(argv[1]), argv[2]);
 	}
 	return (0);
 }

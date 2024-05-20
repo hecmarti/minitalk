@@ -1,46 +1,52 @@
-NAME            =   minitalk
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: hecmarti <hecmarti@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/05/20 16:27:16 by hecmarti          #+#    #+#              #
+#    Updated: 2024/05/20 16:34:59 by hecmarti         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-SERVER			=	server
-SERVER_SRC		=	server.c
+LIBFT = libft/libft.a
 
-SERVER_B		=	server_bonus
-SERVER_BSRC		=	server_bonus.c
+CC = cc
+CCFLAGS = cc -Wall -Werror -Wextra
 
-CLIENT			=	client
-CLIENT_SRC		=	client.c
+SERVER = server
+CLIENT = client
+SRCS_SERVER = server.c
+SRCS_CLIENT = client.c
+SRCS_SERVER_BONUS = server_bonus.c
+SRCS_CLIENT_BONUS = client_bonus.c
 
-CLIENT_B		=	client_bonus
-CLIENT_BSRC		=	client_bonus.c
-
-UTILS_SRC		=	utils.c 
-
-CC				=	gcc
-RM 				=	rm -rf
-FLAGS			= 	-Wall -Werror -Wextra
-
-all : $(SERVER) $(CLIENT)
-
-$(SERVER) :
-	$(CC) $(FLAGS) $(SERVER_SRC) $(UTILS_SRC) -o $(SERVER)
-
-
-$(CLIENT) :
-	$(CC) $(FLAGS) $(CLIENT_SRC) $(UTILS_SRC) -o $(CLIENT)
-
-
-fclean :
-	$(RM) $(SERVER) $(CLIENT) $(SERVER_B) $(CLIENT_B)
-
-bonus : $(SERVER_B) $(CLIENT_B)
-
-$(SERVER_B) :
-	$(CC) $(FLAGS) $(SERVER_BSRC) $(UTILS_SRC) -o $(SERVER_B)
+OBJS_SERVER = $(SRCS_SERVER:.c=.o)
+OBJS_CLIENT = $(SRCS_CLIENT:.c=.o)
+OBJS_SERVER_BONUS = $(SRCS_SERVER_BONUS:.c=.o)
+OBJS_CLIENT_BONUS = $(SRCS_CLIENT_BONUS:.c=.o)
 
 
-$(CLIENT_B) :
-	$(CC) $(FLAGS) $(CLIENT_BSRC) $(UTILS_SRC) -o $(CLIENT_B)
+all: $(SERVER) $(CLIENT)
 
+$(SERVER) $(CLIENT): $(OBJS_SERVER) $(OBJS_CLIENT) $(LIBFT)
+		${CCFLAGS} ${OBJS_SERVER} libft/libft.a -o ${SERVER}
+		${CCFLAGS} ${OBJS_CLIENT} libft/libft.a -o ${CLIENT}
 
-re : fclean all
+$(LIBFT):
+		${MAKE} -C ./libft
 
-.PHONY: all fclean re bonus
+bonus: ${OBJS_SERVER_BONUS} ${OBJS_CLIENT_BONUS} ${LIBFT}
+		${CCFLAGS} ${OBJS_SERVER_BONUS} libft/libft.a -o ${SERVER}
+		${CCFLAGS} ${OBJS_CLIENT_BONUS} libft/libft.a -o ${CLIENT}
+
+clean:	
+		$(MAKE) clean -C ./libft
+		rm -rf ${OBJS_SERVER} ${OBJS_CLIENT} ${OBJS_SERVER_BONUS} ${OBJS_CLIENT_BONUS}
+
+fclean:	clean
+		$(MAKE) fclean -C ./libft
+		rm -rf $(SERVER) $(CLIENT)
+
+re:	fclean all

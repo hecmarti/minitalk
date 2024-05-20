@@ -6,50 +6,54 @@
 /*   By: hecmarti <hecmarti@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 16:06:39 by hecmarti          #+#    #+#             */
-/*   Updated: 2024/05/13 14:31:11 by hecmarti         ###   ########.fr       */
+/*   Updated: 2024/05/20 16:21:29 by hecmarti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-void	ft_server_handler(int signum, siginfo_t *info, void *context)
-{
-	static int	bit = 7;
-	static int	c = 0;
+// Handles SIGUSR1 and SIGUSR2 signals by shifting
+// and ORing the bits of a character
 
-	(void)context;
-	(void)info;
-	if (signum == SIGUSR1)
+// Counter for the number of bits received
+
+// Character being built from the received bits
+
+// Shift the character left and set the least
+// significant bit to 1 if the signal is SIGUSR1;
+// otherwise, shift the character left and set the
+// least significant bit to 0
+
+// If 8 bits have been received, print the
+// character and reset the counter and character
+void	handler(int sig)
+{
+	static int				i = 0;
+	static unsigned char	c = 0;
+
+	if (sig == SIGUSR2)
+		c = c << 1;
+	else if (sig == SIGUSR1)
+		c = (c << 1) | 0b00000001;
+	i++;
+	if (i == 8)
 	{
-		c += 1 << bit;
-	}
-	else if (signum == SIGUSR2)
-	{
-		c += 0 << bit;
-	}
-	bit--;
-	if (bit == -1)
-	{
-		write(1, &c, 1);
-		bit = 7;
+		ft_printf("%c", c);
+		i = 0;
 		c = 0;
 	}
 }
 
+// Print the process ID
+
+// Set up the signal handlers and wait for signals indefinitely
 int	main(void)
 {
-	struct sigaction	sigact;
-
-	sigact.sa_sigaction = ft_server_handler;
-	sigact.sa_flags = SA_SIGINFO;
-	sigemptyset(&sigact.sa_mask);
-	write(1, "SUCCESS!, Server is ready! The PID: ", 36);
-	ft_itoa(getpid());
-	write(1, "\n", 1);
+	ft_printf("PID: %d\n", getpid());
 	while (1)
 	{
-		sigaction(SIGUSR1, &sigact, NULL);
-		sigaction(SIGUSR2, &sigact, NULL);
-		pause();
+		signal(SIGUSR1, handler);
+		signal(SIGUSR2, handler);
 	}
+	return (0);
 }
